@@ -311,6 +311,240 @@ All scripts automatically source this library for consistent behavior.
 **Problem**: Score extraction fails
 - **Solution**: Verify PDBQT output files contain valid docking results
 
+## Machine Learning Model Training
+
+### Overview
+
+In addition to traditional docking workflows, this repository now includes machine learning capabilities to train predictive models that combine Vina docking scores with 2D and 3D molecular descriptors to improve binding affinity predictions.
+
+### Why Use Machine Learning?
+
+While AutoDock Vina provides excellent docking scores, machine learning models can:
+- Correct systematic biases in docking scores
+- Incorporate additional molecular properties (lipophilicity, shape, flexibility)
+- Learn from experimental data to improve predictions
+- Provide confidence estimates for predictions
+
+### Requirements
+
+Install Python dependencies:
+```bash
+pip install -r requirements.txt
+```
+
+Key dependencies:
+- scikit-learn: Machine learning algorithms
+- xgboost: Gradient boosting (optional)
+- rdkit: Molecular descriptor calculation
+- pandas/numpy: Data manipulation
+
+### 7. train_model.py - Model Training
+
+Train a machine learning model using experimental binding affinity data.
+
+**Usage:**
+```bash
+python train_model.py -i training_data.csv -o model.pkl [OPTIONS]
+```
+
+**Options:**
+- `-i, --input FILE`: Input CSV with training data (required)
+- `-o, --output FILE`: Output model file (default: binding_affinity_model.pkl)
+- `-t, --target COL`: Target column name (default: experimental_affinity)
+- `-m, --model-type TYPE`: Model type (random_forest, gradient_boosting, xgboost)
+- `-n, --n-estimators NUM`: Number of trees (default: 100)
+- `-c, --compute-descriptors`: Compute descriptors from SMILES
+- `--cv-folds NUM`: Cross-validation folds (default: 5)
+- `--no-plots`: Skip generating plots
+- `--random-state NUM`: Random seed (default: 42)
+
+**Input CSV Format:**
+
+Your training CSV must contain:
+- `experimental_affinity`: Experimental binding values (pKd, pKi, ΔG, etc.)
+- `SMILES`: Molecular structure (for descriptor computation)
+- `Score_kcal_mol`: Vina docking score (optional)
+- Other descriptors from `score.sh` output (MW, logP, TPSA, etc.)
+
+**Example:**
+```csv
+PDBQT_File,SMILES,Score_kcal_mol,MW,logP,TPSA,experimental_affinity
+out_lig1.pdbqt,CCO,-7.5,46.07,0.01,20.23,-7.8
+out_lig2.pdbqt,CC(C)O,-8.2,60.10,0.14,20.23,-8.5
+```
+
+**Examples:**
+```bash
+# Basic training with existing descriptors
+python train_model.py -i training_data.csv -o my_model.pkl
+
+# Train with computed 2D/3D descriptors
+python train_model.py -i training_data.csv -o my_model.pkl --compute-descriptors
+
+# Use XGBoost with 200 trees
+python train_model.py -i training_data.csv -m xgboost -n 200
+
+# Custom target column name
+python train_model.py -i data.csv -t pKd_experimental
+```
+
+**Output Files:**
+- `model.pkl`: Trained model
+- `model_metrics.json`: Performance metrics
+- `model_feature_importance.png`: Feature importance plot
+- `model_predictions.png`: Predicted vs actual plot
+
+### 8. predict.py - Making Predictions
+
+Use a trained model to predict binding affinities for new compounds.
+
+**Usage:**
+```bash
+python predict.py -m model.pkl -i input.csv -o predictions.csv [OPTIONS]
+```
+
+**Options:**
+- `-m, --model FILE`: Trained model file (required)
+- `-i, --input FILE`: Input CSV with molecular data (required)
+- `-o, --output FILE`: Output CSV with predictions (default: predictions.csv)
+- `-c, --compute-descriptors`: Compute descriptors from SMILES
+- `--sort`: Sort results by predicted affinity
+
+**Examples:**
+```bash
+# Basic prediction
+python predict.py -m my_model.pkl -i new_compounds.csv -o results.csv
+
+# Predict with descriptor computation and sorting
+python predict.py -m my_model.pkl -i compounds.csv --compute-descriptors --sort
+
+# Use with Vina docking results
+./score.sh -i "out*.pdbqt"  # Generate descriptors
+python predict.py -m my_model.pkl -i scoring.csv -o enhanced_predictions.csv
+```
+
+**Output:**
+
+The output CSV includes:
+- All original columns from input
+- `predicted_affinity`: ML-predicted binding affinity
+- `prediction_std`: Uncertainty estimate (for ensemble models)
+
+### Complete ML Workflow Example
+
+**Step 1: Prepare Training Data**
+
+Collect experimental binding affinity data for your target protein. This could be from:
+- Your own experiments
+- Public databases (ChEMBL, BindingDB, PDBbind)
+- Literature sources
+
+Format as CSV with required columns (see example above).
+
+**Step 2: Generate Descriptors**
+
+If you don't have descriptors yet, run docking and post-processing:
+```bash
+# Run docking pipeline
+./vina_pipeline.sh --jobs 4
+
+# This creates scoring_ord.csv with Vina scores and descriptors
+```
+
+**Step 3: Add Experimental Values**
+
+Add your experimental binding affinity values to the CSV:
+```bash
+# Edit scoring_ord.csv to add experimental_affinity column
+# Or merge with your experimental data
+```
+
+**Step 4: Train Model**
+
+```bash
+# Train model with computed 2D/3D descriptors
+python train_model.py \
+  -i training_data.csv \
+  -o my_target_model.pkl \
+  -m xgboost \
+  -n 200 \
+  --compute-descriptors
+
+# Review output metrics and plots
+cat my_target_model_metrics.json
+```
+
+**Step 5: Make Predictions**
+
+```bash
+# Predict binding affinities for new compounds
+python predict.py \
+  -m my_target_model.pkl \
+  -i scoring_ord.csv \
+  -o enhanced_predictions.csv \
+  --compute-descriptors \
+  --sort
+
+# Best predicted binders are now at the top
+head enhanced_predictions.csv
+```
+
+### Model Features
+
+The ML models can use these features:
+
+**Vina Scoring:**
+- Score_kcal_mol: Binding energy
+- Score_J_mol: Energy in Joules
+- pKb: Estimated binding constant
+
+**2D Descriptors:**
+- MW: Molecular weight
+- LogP: Lipophilicity
+- TPSA: Topological polar surface area
+- HBA/HBD: Hydrogen bond acceptors/donors
+- RotatableBonds: Molecular flexibility
+- AromaticRings: Aromaticity
+- MolMR: Molar refractivity
+
+**3D Descriptors (computed from SMILES):**
+- InertialShapeFactor: Molecular shape
+- Eccentricity: Shape elongation
+- Asphericity: Deviation from sphere
+- RadiusOfGyration: Molecular size
+- PMI1/PMI2/PMI3: Principal moments of inertia
+- NPR1/NPR2: Normalized principal ratios
+
+### Tips for Model Training
+
+1. **Data Quality**: Use high-quality experimental data from the same assay type
+2. **Sample Size**: Aim for at least 50-100 compounds for training
+3. **Feature Selection**: The model automatically selects relevant features
+4. **Cross-Validation**: Use CV metrics (not training metrics) to assess performance
+5. **Descriptor Computation**: Use `--compute-descriptors` for additional 3D features
+6. **Model Choice**: 
+   - Random Forest: Good default, robust to overfitting
+   - XGBoost: Often better performance, requires tuning
+   - Gradient Boosting: Balance between the two
+
+### Interpreting Results
+
+**R² (Coefficient of Determination):**
+- 1.0 = Perfect predictions
+- 0.8-0.9 = Excellent model
+- 0.6-0.8 = Good model
+- <0.6 = May need more data or features
+
+**RMSE (Root Mean Square Error):**
+- Lower is better
+- Compare to the range of your target values
+- Should be similar between CV and training sets
+
+**MAE (Mean Absolute Error):**
+- Average prediction error
+- More interpretable than RMSE
+- In the same units as your target variable
+
 ## Contributing
 
 Contributions are welcome! Please feel free to submit issues or pull requests.
@@ -327,4 +561,6 @@ Juan José Cas
 
 - [AutoDock Vina](http://vina.scripps.edu/)
 - [OpenBabel](http://openbabel.org/)
+- [RDKit](https://www.rdkit.org/)
+- [scikit-learn](https://scikit-learn.org/)
 - Lipinski's Rule of Five for drug-likeness assessment
