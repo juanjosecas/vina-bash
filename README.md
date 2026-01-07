@@ -317,6 +317,8 @@ All scripts automatically source this library for consistent behavior.
 
 In addition to traditional docking workflows, this repository now includes machine learning capabilities to train predictive models that combine Vina docking scores with 2D and 3D molecular descriptors to improve binding affinity predictions.
 
+**For a complete tutorial, see [ML_QUICKSTART.md](ML_QUICKSTART.md)**
+
 ### Why Use Machine Learning?
 
 While AutoDock Vina provides excellent docking scores, machine learning models can:

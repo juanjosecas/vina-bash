@@ -1,0 +1,16 @@
+PDBQT_File,MOL2_File,SMILES,Score_kcal_mol,Score_J_mol,pKb,MW,logP,TPSA,MR,HBA1,HBA2,HBD,Formula,experimental_affinity
+out_lig1.pdbqt,lig1.mol2,CCO,-7.5,-31365.00,10.20,46.07,0.01,20.23,13.00,1,1,1,C2H6O,-7.8
+out_lig2.pdbqt,lig2.mol2,CC(C)O,-8.2,-34292.40,11.15,60.10,0.14,20.23,17.51,1,1,1,C3H8O,-8.5
+out_lig3.pdbqt,lig3.mol2,c1ccccc1,-6.1,-25510.20,8.30,78.11,1.89,0.00,26.42,0,0,0,C6H6,-6.3
+out_lig4.pdbqt,lig4.mol2,CC(=O)O,-7.1,-29692.20,9.66,60.05,-0.17,37.30,14.08,2,2,1,C2H4O2,-7.4
+out_lig5.pdbqt,lig5.mol2,CCN,-5.8,-24255.60,7.89,45.08,0.08,26.02,14.01,1,1,2,C2H7N,-6.0
+out_lig6.pdbqt,lig6.mol2,c1ccc(O)cc1,-7.8,-32619.60,10.61,94.11,1.46,20.23,29.42,1,1,1,C6H6O,-8.1
+out_lig7.pdbqt,lig7.mol2,CC(C)CC,-6.5,-27183.00,8.84,72.15,2.49,0.00,23.51,0,0,0,C5H12,-6.7
+out_lig8.pdbqt,lig8.mol2,c1cc(Cl)ccc1,-7.0,-29274.00,9.52,112.56,2.59,0.00,32.32,0,0,0,C6H5Cl,-7.2
+out_lig9.pdbqt,lig9.mol2,CC(=O)N,-6.8,-28438.80,9.25,59.07,-0.97,43.09,15.09,1,1,2,C2H5NO,-7.0
+out_lig10.pdbqt,lig10.mol2,CCCC,-5.5,-23001.00,7.48,58.12,2.36,0.00,19.01,0,0,0,C4H10,-5.7
+out_lig11.pdbqt,lig11.mol2,c1cccnc1,-6.9,-28856.40,9.38,79.10,0.65,12.89,25.78,1,1,0,C5H5N,-7.1
+out_lig12.pdbqt,lig12.mol2,CC(C)N,-6.2,-25928.40,8.43,59.11,0.26,26.02,17.51,1,1,2,C3H9N,-6.4
+out_lig13.pdbqt,lig13.mol2,c1cc(N)ccc1,-7.3,-30528.60,9.93,93.13,0.95,26.02,29.93,1,1,2,C6H7N,-7.6
+out_lig14.pdbqt,lig14.mol2,CC(O)C(=O)O,-7.9,-33038.20,10.74,90.08,-0.28,57.53,20.58,3,3,2,C3H6O3,-8.2
+out_lig15.pdbqt,lig15.mol2,CCOC,-6.0,-25092.00,8.16,60.10,0.55,9.23,17.51,1,1,0,C3H8O,-6.2
