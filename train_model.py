@@ -326,22 +326,27 @@ class BindingAffinityModelTrainer:
         Args:
             output_path: Output file path for plot
         """
+        # XGBoost, Random Forest, and Gradient Boosting all support feature_importances_
         if not hasattr(self.model, 'feature_importances_'):
             print("Model does not support feature importance.")
             return
         
-        importance = self.model.feature_importances_
-        indices = np.argsort(importance)[::-1][:20]  # Top 20 features
-        
-        plt.figure(figsize=(10, 8))
-        plt.barh(range(len(indices)), importance[indices])
-        plt.yticks(range(len(indices)), [self.feature_names[i] for i in indices])
-        plt.xlabel('Feature Importance')
-        plt.title('Top 20 Most Important Features')
-        plt.tight_layout()
-        plt.savefig(output_path, dpi=300, bbox_inches='tight')
-        plt.close()
-        print(f"Feature importance plot saved to: {output_path}")
+        try:
+            importance = self.model.feature_importances_
+            indices = np.argsort(importance)[::-1][:20]  # Top 20 features
+            
+            plt.figure(figsize=(10, 8))
+            plt.barh(range(len(indices)), importance[indices])
+            plt.yticks(range(len(indices)), [self.feature_names[i] for i in indices])
+            plt.xlabel('Feature Importance')
+            plt.title('Top 20 Most Important Features')
+            plt.tight_layout()
+            plt.savefig(output_path, dpi=300, bbox_inches='tight')
+            plt.close()
+            print(f"Feature importance plot saved to: {output_path}")
+        except Exception as e:
+            print(f"Error generating feature importance plot: {e}")
+
     
     def plot_predictions(self, X: np.ndarray, y: np.ndarray, 
                         output_path: str = 'predictions_plot.png'):

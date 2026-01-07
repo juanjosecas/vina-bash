@@ -265,13 +265,17 @@ class BindingAffinityPredictor:
         result_df = df.copy()
         result_df['predicted_affinity'] = predictions
         
-        # Add uncertainty estimate if available
-        if hasattr(self.model, 'estimators_'):
-            # For ensemble models, compute prediction variance
-            X_scaled = self.scaler.transform(X)
-            all_predictions = np.array([tree.predict(X_scaled) for tree in self.model.estimators_])
-            prediction_std = np.std(all_predictions, axis=0)
-            result_df['prediction_std'] = prediction_std
+        # Add uncertainty estimate if available (for sklearn ensemble models)
+        try:
+            if hasattr(self.model, 'estimators_') and hasattr(self.model.estimators_[0], 'predict'):
+                # For Random Forest and Gradient Boosting
+                X_scaled = self.scaler.transform(X)
+                all_predictions = np.array([tree.predict(X_scaled) for tree in self.model.estimators_])
+                prediction_std = np.std(all_predictions, axis=0)
+                result_df['prediction_std'] = prediction_std
+        except Exception as e:
+            # Silently skip uncertainty estimation if not available
+            pass
         
         return result_df
 
