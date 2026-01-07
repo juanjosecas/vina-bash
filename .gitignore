@@ -1,0 +1,36 @@
+# Log files
+*.log
+vina_pipeline.log
+
+# Output files
+out_*.pdbqt
+*.mol2
+scoring.csv
+scoring_ord.csv
+filtered_results.csv
+top_results.csv
+summary_report.txt
+
+# Output directories
+results/
+converted/
+
+# Backup files
+*.bak
+*.old
+*~
+
+# Temporary files
+*.tmp
+*.temp
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Editor files
+*.swp
+*.swo
+.vscode/
+.idea/
+*.sublime-*

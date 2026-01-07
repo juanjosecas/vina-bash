@@ -1,0 +1,44 @@
+# AutoDock Vina Configuration File Example
+# 
+# This is an example configuration file for AutoDock Vina
+# Modify the values according to your docking requirements
+#
+# For more information, see: http://vina.scripps.edu/manual.html
+
+# Input
+receptor = receptor.pdbqt          # Required: path to the rigid receptor file
+
+# Search space (required)
+# Define the center and size of the search box in Angstroms
+center_x = 25.0
+center_y = 30.0
+center_z = 10.0
+
+size_x = 20
+size_y = 20
+size_z = 20
+
+# Optional parameters
+exhaustiveness = 8                  # Default: 8, range: 1-infinity
+                                   # Higher values = more thorough search but slower
+                                   # Recommended: 8-32 for most cases
+
+num_modes = 9                      # Default: 9, range: 1-infinity
+                                   # Maximum number of binding modes to generate
+
+energy_range = 3                   # Default: 3 (kcal/mol)
+                                   # Maximum energy difference between best and worst mode
+
+# Advanced options (uncomment to use)
+# cpu = 4                          # Number of CPUs to use (default: auto-detect)
+# seed = 0                         # Random seed (default: random)
+# log = vina.log                   # Log file name (default: no log file)
+
+# Flexible residues (uncomment and modify if needed)
+# flex = flexible_residues.pdbqt   # Path to flexible side chains
+
+# Notes:
+# - The ligand is specified on the command line using --ligand flag
+# - Output file is specified using --out flag
+# - Search space should cover the binding site with some margin
+# - Use visualization software (PyMOL, Chimera) to determine box coordinates
