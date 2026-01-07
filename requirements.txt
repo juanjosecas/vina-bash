@@ -1,0 +1,21 @@
+# Python dependencies for ML model training and prediction
+# Install with: pip install -r requirements.txt
+
+# Core scientific computing
+numpy>=1.21.0
+pandas>=1.3.0
+scipy>=1.7.0
+
+# Machine learning
+scikit-learn>=1.0.0
+xgboost>=1.5.0
+
+# Molecular descriptors and cheminformatics
+rdkit>=2022.03.1
+
+# Plotting and visualization (optional)
+matplotlib>=3.4.0
+seaborn>=0.11.0
+
+# Job parallelization
+joblib>=1.0.0

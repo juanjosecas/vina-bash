@@ -34,3 +34,26 @@ Thumbs.db
 .vscode/
 .idea/
 *.sublime-*
+
+# Python files
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+ENV/
+.venv
+
+# ML model files
+*.pkl
+*_model.pkl
+*_metrics.json
+*_feature_importance.png
+*_predictions.png
+predictions.csv
+
+# Jupyter notebooks
+.ipynb_checkpoints
+*.ipynb
