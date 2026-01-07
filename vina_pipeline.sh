@@ -151,16 +151,18 @@ main() {
     echo ""
     
     if [ -x "${SCRIPT_DIR}/score.sh" ]; then
-        local score_args="-i ${OUTPUT_DIR}/out*.pdbqt -o ${OUTPUT_DIR}/scoring.csv -s ${OUTPUT_DIR}/scoring_ord.csv"
-        
         if [ "$KEEP_MOL2" = true ]; then
-            score_args="$score_args --keep-mol2"
-        fi
-        
-        if "${SCRIPT_DIR}/score.sh" $score_args; then
-            success "Post-processing completed successfully"
+            if "${SCRIPT_DIR}/score.sh" -i "${OUTPUT_DIR}/out*.pdbqt" -o "${OUTPUT_DIR}/scoring.csv" -s "${OUTPUT_DIR}/scoring_ord.csv" --keep-mol2; then
+                success "Post-processing completed successfully"
+            else
+                error_exit "Post-processing failed"
+            fi
         else
-            error_exit "Post-processing failed"
+            if "${SCRIPT_DIR}/score.sh" -i "${OUTPUT_DIR}/out*.pdbqt" -o "${OUTPUT_DIR}/scoring.csv" -s "${OUTPUT_DIR}/scoring_ord.csv"; then
+                success "Post-processing completed successfully"
+            else
+                error_exit "Post-processing failed"
+            fi
         fi
     else
         error_exit "score.sh not found or not executable"

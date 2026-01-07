@@ -256,7 +256,8 @@ sort_results() {
     info "Sorting results by score..."
     
     # Sort by score column (4th column), numerically
-    (head -n 1 "$OUTPUT_CSV" && tail -n +2 "$OUTPUT_CSV" | sort -t, -k4 -n) > "$SORTED_CSV"
+    # Use -g for general numeric sort which handles scientific notation and N/A
+    (head -n 1 "$OUTPUT_CSV" && tail -n +2 "$OUTPUT_CSV" | sort -t, -k4 -g) > "$SORTED_CSV"
     
     if [ -f "$SORTED_CSV" ]; then
         success "Sorted results saved to: $SORTED_CSV"

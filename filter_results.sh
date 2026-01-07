@@ -99,23 +99,16 @@ check_lipinski() {
         return 1
     fi
     
-    if (( $(echo "$mw > 500" | bc -l) )); then
+    # Use awk for floating-point comparison
+    local passes=$(awk -v mw="$mw" -v logp="$logp" -v hbd="$hbd" -v hba="$hba" 'BEGIN {
+        if (mw <= 500 && logp <= 5 && hbd <= 5 && hba <= 10) print 1; else print 0
+    }')
+    
+    if [ "$passes" -eq 1 ]; then
+        return 0
+    else
         return 1
     fi
-    
-    if (( $(echo "$logp > 5" | bc -l) )); then
-        return 1
-    fi
-    
-    if (( $(echo "$hbd > 5" | bc -l) )); then
-        return 1
-    fi
-    
-    if (( $(echo "$hba > 10" | bc -l) )); then
-        return 1
-    fi
-    
-    return 0
 }
 
 #######################################
@@ -163,7 +156,11 @@ main() {
         
         # Score threshold filter
         if [ -n "$SCORE_THRESHOLD" ] && [ "$score" != "N/A" ]; then
-            if (( $(echo "$score > $SCORE_THRESHOLD" | bc -l) )); then
+            # Use awk for floating-point comparison
+            local score_pass=$(awk -v score="$score" -v threshold="$SCORE_THRESHOLD" 'BEGIN {
+                if (score <= threshold) print 1; else print 0
+            }')
+            if [ "$score_pass" -eq 0 ]; then
                 pass=false
             fi
         fi
